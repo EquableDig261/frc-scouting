@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 "use client";
@@ -41,42 +40,47 @@ type TField = {
   name: string;
   type: string | string[];
   schema: z.ZodTypeAny;
+  placeholder: string;
 };
 
 type FormData = z.infer<typeof formSchema>;
 
 const initialFormData: Partial<FormData> = {
-  "Team Name": "",
   "Team Number": 0,
   "Qualification Number": 0,
   "Starting Position": undefined,
-  Preload: undefined,
-  Route: "",
+  "Left Starting Line": undefined,
   "Autonomous Cycles": {
     "Coral Level 1": 0,
+    "Coral Level 1 Missed": 0,
     "Coral Level 2": 0,
+    "Coral Level 2 Missed": 0,
     "Coral Level 3": 0,
+    "Coral Level 3 Missed": 0,
     "Coral Level 4": 0,
+    "Coral Level 4 Missed": 0,
     "Algae Processor": 0,
-    "Algae Net": 0,
-    "Cycle Times": [],
+    "Algae Barge": 0,
+    "Algae Barge Missed": 0,
   },
   "Teleop Cycles": {
     "Coral Level 1": 0,
+    "Coral Level 1 Missed": 0,
     "Coral Level 2": 0,
+    "Coral Level 2 Missed": 0,
     "Coral Level 3": 0,
+    "Coral Level 3 Missed": 0,
     "Coral Level 4": 0,
+    "Coral Level 4 Missed": 0,
     "Algae Processor": 0,
-    "Algae Net": 0,
-    "Cycle Times": [],
+    "Algae Barge": 0,
+    "Algae Barge Missed": 0,
   },
-  "Cage Level": undefined,
-  "Cage Time": [],
-  "Drive Team Ability": "",
-  Penalties: undefined,
-  Defense: undefined,
-  "Scoring Behind Reef": undefined,
-  "Extra Notes": { text: "", tags: [] },
+  "Climb Status": undefined,
+  "Climb Rating": undefined,
+  "Driving Rating": undefined,
+  "Defence Rating": undefined,
+  "Extra Notes": {text: ""},
 };
 
 export function MatchScoutingForm() {
@@ -99,13 +103,10 @@ export function MatchScoutingForm() {
     };
   }, []);
 
-  const [showSpreadsheetIDDialog, setShowSpreadsheetIDDialog] = useState(false);
+  const [showCompetitionIDDialog, setShowCompetitionIDDialog] = useState(false);
   const [showQRModal, setShowQRModal] = useState(false);
   const [showClearDataDialog, setShowClearDataDialog] = useState(false);
-  const [spreadsheetID, setSpreadsheetID] = useState("");
-  const [sheetID, setSheetID] = useState("");
-  const [teams, setTeams] = useState<Record<string, string>>({});
-  const [JSONInput, setJSONInput] = useState("");
+  const [competitionID, setCompetitionID] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [QRCodeData, setQRCodeData] = useState("");
   const [QRBgColour, setQRBgColour] = useState("#ffffff");
@@ -145,19 +146,9 @@ export function MatchScoutingForm() {
   }, []);
 
   useEffect(() => {
-    const storedSpreadsheetID = localStorage.getItem("spreadsheetID");
-    if (storedSpreadsheetID) {
-      setSpreadsheetID(storedSpreadsheetID);
-    }
-
-    const storedTeams = localStorage.getItem("teams");
-    if (storedTeams) {
-      setTeams(JSON.parse(storedTeams));
-    }
-
-    const storedSheetID = localStorage.getItem("sheetID");
-    if (storedSheetID) {
-      setSheetID(storedSheetID);
+    const storedCompetitionID = localStorage.getItem("competitionID");
+    if (storedCompetitionID) {
+      setCompetitionID(storedCompetitionID);
     }
 
     loadSubmissions();
@@ -169,19 +160,6 @@ export function MatchScoutingForm() {
     defaultValues: initialFormData,
     mode: "onSubmit",
   });
-
-  useEffect(() => {
-    const teamNumber = form.watch("Team Number");
-    if (teamNumber && teams && Object.keys(teams).length > 0) {
-      const teamName = teams[teamNumber.toString()];
-      if (teamName) {
-        form.setValue("Team Name", teamName);
-        toast.info(`Team found: ${teamName}`);
-      } else {
-        form.setValue("Team Name", "");
-      }
-    }
-  }, [form, teams, form.watch("Team Number")]);
 
   const [activeTab, setActiveTab] = useState<
     "autonomous" | "teleop" | "misc" | string
@@ -266,19 +244,15 @@ export function MatchScoutingForm() {
 
     toast.promise(
       submit({
-        ...data,
-        spreadsheetID,
-        sheetID,
+        ...data, 
+        competitionID,
       }),
       {
         loading: "Submitting form...",
         success: (result) => {
           if (result.success) {
-            resetForm();
+            // resetForm();
             return "Form submitted successfully";
-          } else if (result.localSuccess) {
-            resetForm();
-            return "Data saved locally. " + result.message;
           } else {
             throw new Error(result.message || "Form submission failed");
           }
@@ -344,7 +318,7 @@ export function MatchScoutingForm() {
   }
 
   function resetForm() {
-    form.reset(initialFormData);
+    // form.reset(initialFormData);
   }
 
   function handleExport() {
@@ -397,6 +371,29 @@ export function MatchScoutingForm() {
             section={section}
           />
         </div>
+        <h4 className="text-sm font-semibold mt-4">Coral Missed</h4>
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-x-4">
+          <CycleField
+            name={`${fieldName}.Coral Level 1 Missed`}
+            label="Level 1"
+            section={section}
+          />
+          <CycleField
+            name={`${fieldName}.Coral Level 2 Missed`}
+            label="Level 2"
+            section={section}
+          />
+          <CycleField
+            name={`${fieldName}.Coral Level 3 Missed`}
+            label="Level 3"
+            section={section}
+          />
+          <CycleField
+            name={`${fieldName}.Coral Level 4 Missed`}
+            label="Level 4"
+            section={section}
+          />
+        </div>
         <h4 className="text-sm font-semibold mt-4">Algae</h4>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-x-4">
           <CycleField
@@ -405,13 +402,13 @@ export function MatchScoutingForm() {
             section={section}
           />
           <CycleField
-            name={`${fieldName}.Algae Net`}
-            label="Net"
+            name={`${fieldName}.Algae Barge`}
+            label="Barge"
             section={section}
           />
-          <StopwatchField
-            name={`${fieldName}.Cycle Times`}
-            label="Cycle Times"
+          <CycleField
+            name={`${fieldName}.Algae Barge Missed`}
+            label="Barge Misses"
             section={section}
           />
         </div>
@@ -427,7 +424,7 @@ export function MatchScoutingForm() {
             type={field.schema instanceof z.ZodNumber ? "number" : "text"}
             name={field.name}
             label={field.name}
-            placeholder={`Enter ${field.name.toLowerCase()}`}
+            placeholder={`${field.placeholder}`}
           />
         );
       case "cycles":
@@ -467,7 +464,7 @@ export function MatchScoutingForm() {
     return (
       <div className="space-y-6">
         {regularFields.length > 0 && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4">
             {regularFields.map((field) => (
               <div key={field.name}>{renderField(field)}</div>
             ))}
@@ -515,7 +512,7 @@ export function MatchScoutingForm() {
             <div className="flex items-center space-x-4">
               <Button
                 type="button"
-                onClick={() => setShowSpreadsheetIDDialog(true)}
+                onClick={() => setShowCompetitionIDDialog(true)}
                 size="icon"
               >
                 <Settings className="h-4 w-4" />
@@ -559,15 +556,10 @@ export function MatchScoutingForm() {
       </Form>
 
       <Config
-        open={showSpreadsheetIDDialog}
-        onOpenChange={setShowSpreadsheetIDDialog}
-        spreadsheetID={spreadsheetID}
-        setSpreadsheetID={setSpreadsheetID}
-        sheetID={sheetID}
-        setSheetID={setSheetID}
-        JSONInput={JSONInput}
-        setJSONInput={setJSONInput}
-        setTeams={setTeams}
+        open={showCompetitionIDDialog}
+        onOpenChange={setShowCompetitionIDDialog}
+        competitionID={competitionID}
+        setCompetitionID={setCompetitionID}
       />
 
       <ExportData

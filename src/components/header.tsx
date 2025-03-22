@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-import { site } from "@/config/site";
 import { useScroll } from "@/hooks/use-scroll";
 
 // import Navigation from "@/components/navigation";
@@ -26,8 +25,14 @@ export default function Header() {
     >
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
-          <Link href="/" className="flex items-center space-x-2">
-            <span className="font-semibold text-xl">{site.name.short}</span>
+          <Link href="/match" className="flex items-center space-x-2">
+            <span className="font-semibold text-xl">scout</span>
+          </Link>
+          <Link href="/data-analysis" className="flex items-center space-x-2">
+            <span className="font-semibold text-xl">pick list</span>
+          </Link>
+          <Link href="/data-analysis" className="flex items-center space-x-2">
+            <span className="font-semibold text-xl">compare teams</span>
           </Link>
           {/* <Navigation /> */}
         </div>
