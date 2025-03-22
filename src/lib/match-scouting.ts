@@ -1,48 +1,41 @@
 import { z } from "zod";
 
 import {
-  requiredString,
   requiredNumber,
   cycleSchema,
-  cageTime,
   notes,
 } from "./schema";
 
 export const autonomous = [
   {
-    name: "Team Name",
-    type: "input",
-    schema: z.string(),
-  },
-  {
     name: "Team Number",
     type: "input",
     schema: requiredNumber,
+    placeholder: "Enter Team Number",
   },
   {
     name: "Qualification Number",
     type: "input",
     schema: requiredNumber,
+    placeholder: "Enter Match Number",
   },
   {
     name: "Starting Position",
     type: ["Processor", "Middle", "Non-Processor"],
     schema: z.enum(["Processor", "Middle", "Non-Processor"]),
+    placeholder: "",
   },
   {
-    name: "Preload",
-    type: ["Yes", "No"],
-    schema: z.enum(["Yes", "No"]),
-  },
-  {
-    name: "Route",
-    type: "input",
-    schema: requiredString,
+    name: "Left Starting Line",
+    type: ["True", "False"],
+    schema: z.enum(["True", "False"]),
+    placeholder: "",
   },
   {
     name: "Autonomous Cycles",
     type: "cycles",
     schema: cycleSchema,
+    placeholder: "",
   },
 ];
 
@@ -51,43 +44,39 @@ export const teleop = [
     name: "Teleop Cycles",
     type: "cycles",
     schema: cycleSchema,
+    placeholder: "",
   },
 ];
 
 export const misc = [
   {
-    name: "Cage Level",
-    type: ["Deep", "Shallow", "None"],
-    schema: z.enum(["Deep", "Shallow", "None"]),
+    name: "Climb Status",
+    type: ["Deep", "Shallow", "Park", "None"],
+    schema: z.enum(["Deep", "Shallow", "Park", "None"]),
+    placeholder: "",
   },
   {
-    name: "Cage Time",
-    type: "stopwatch",
-    schema: cageTime,
-  },
-  {
-    name: "Drive Team Ability",
+    name: "Climb Rating",
     type: "input",
-    schema: requiredString,
+    schema: requiredNumber,
+    placeholder: "rate climb speed 1-5, 0 for none",
   },
   {
-    name: "Penalties",
-    type: ["Yes", "No"],
-    schema: z.enum(["Yes", "No"]),
+    name: "Driving Rating",
+    type: "input",
+    schema: requiredNumber,
+    placeholder: "rate score driving 1-5, 0 for none",
   },
   {
-    name: "Defense",
-    type: ["Yes", "No"],
-    schema: z.enum(["Yes", "No"]),
-  },
-  {
-    name: "Scoring Behind Reef",
-    type: ["Yes", "No"],
-    schema: z.enum(["Yes", "No"]),
+    name: "Defence Rating",
+    type: "input",
+    schema: requiredNumber,
+    placeholder: "rate defence 1-5, 0 for none",
   },
   {
     name: "Extra Notes",
     type: "notes",
     schema: notes,
+    placeholder: "Enter Extra Notes",
   },
 ];
