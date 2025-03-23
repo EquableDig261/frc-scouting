@@ -31,7 +31,7 @@ export default function Header() {
           <Link href="/data-analysis" className="flex items-center space-x-2">
             <span className="font-semibold text-xl">pick list</span>
           </Link>
-          <Link href="/data-analysis" className="flex items-center space-x-2">
+          <Link href="/compare" className="flex items-center space-x-2">
             <span className="font-semibold text-xl">compare teams</span>
           </Link>
           {/* <Navigation /> */}
