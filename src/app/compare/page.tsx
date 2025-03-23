@@ -4,6 +4,8 @@ import React, { useEffect, useState } from "react";
 import { fetchData } from "./../get-data";
 import { Helper } from "@/components/form/help";
 import { fetchComparisonData } from "../actions/comparison-data";
+import ClusteredBarChart from "@/components/chart";
+import { fetchMatchData } from "../actions/get-match-data";
 
 // Define the types
 type TeamData = {
@@ -35,8 +37,17 @@ type ComparisonData = {
   scoring_rating_avg: number;
 };
 
+interface MatchResult {
+    name: string;
+    categoryA?: number;
+    categoryB?: number;
+    categoryC?: number;
+    categoryD?: number;
+}
+
 export default function TeamComparison() {
     const [teams, setTeams] = useState<TeamData[]>([]);
+    const [selectedStringTeams, setSelectedStringTeams] = useState<string[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const [selectedTeams, setSelectedTeams] = useState({
       team1: "",
@@ -46,6 +57,20 @@ export default function TeamComparison() {
     });
     const [comparisonData, setComparisonData] = useState<ComparisonData[]>([]);
     const [dataLoading, setDataLoading] = useState<boolean>(false);
+    const [matchData, setMatchData] = useState<MatchResult[]>([]);
+    const [selectedField, setSelectedField] = useState<string>("auto_l1");
+
+    const handleFieldChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
+        setSelectedField(e.target.value);
+        let { team1, team2, team3, team4 } = selectedTeams;
+      
+        team1 = !team1 ? "0" : team1;
+        team2 = !team2 ? "0" : team2;
+        team3 = !team3 ? "0" : team3;
+        team4 = !team4 ? "0" : team4;
+        const results = await fetchMatchData(e.target.value, parseInt(team1), parseInt(team2), parseInt(team3), parseInt(team4));
+        setMatchData(results);
+    };
   
     useEffect(() => {
       const getTeams = async () => {
@@ -69,6 +94,7 @@ export default function TeamComparison() {
       };
       
       setSelectedTeams(newSelectedTeams);
+      setSelectedStringTeams(Object.values(newSelectedTeams).filter((team) => !!team));
     };
   
     const handleCompare = async () => {
@@ -86,7 +112,10 @@ export default function TeamComparison() {
       }
       
       setDataLoading(true);
-      
+
+      const results = await fetchMatchData(selectedField, parseInt(team1), parseInt(team2), parseInt(team3), parseInt(team4));
+      setMatchData(results);
+
       try {
         const compData = await fetchComparisonData(
           parseInt(team1), 
@@ -228,7 +257,7 @@ export default function TeamComparison() {
                       {comparisonData.map((team) => (
                         <th key={`header-${team.team_id}`} scope="col" className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
                           Team {team.team_id}
-                        </th>
+                        </th>   
                       ))}
                     </tr>
                   </thead>
@@ -471,6 +500,47 @@ export default function TeamComparison() {
               </div>
             </div>
           )}
+          {/* Match Data Graph Section */}
+            {comparisonData.length > 0 && (
+            <div className="bg-white shadow-md rounded-lg p-6 mb-8">
+                <h2 className="text-xl font-bold mb-4">Match Performance Graph</h2>
+                
+                <div className="mb-6">
+                <label htmlFor="fieldSelect" className="block text-sm font-medium text-gray-700 mb-2">
+                    Select Metric to View:
+                </label>
+                <select
+                    id="fieldSelect"
+                    className="block w-full md:w-1/3 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                    value={selectedField}
+                    onChange={handleFieldChange}
+                >
+                    <option value="auto_l1">Auto L1 Average</option>
+                    <option value="auto_l2">Auto L2 Average</option>
+                    <option value="auto_l3">Auto L3 Average</option>
+                    <option value="auto_l4">Auto L4 Average</option>
+                    <option value="teleop_l1">Teleop L1 Average</option>
+                    <option value="teleop_l2">Teleop L2 Average</option>
+                    <option value="teleop_l3">Teleop L3 Average</option>
+                    <option value="teleop_l4">Teleop L4 Average</option>
+                    <option value="auto_barge">Auto Barge Average</option>
+                    <option value="teleop_barge">Teleop Barge Average</option>
+                    <option value="processor">Processor Average</option>
+                    <option value="defence_rating">Defense Rating</option>
+                    <option value="scoring_rating">Scoring Rating</option>
+                    <option value="climb_rating">Climb Rating</option>
+                </select>
+                </div>
+                
+                {matchData.length > 0 ? (
+                <div className="h-80">
+                    <ClusteredBarChart data={matchData} teams={selectedStringTeams}/>
+                </div>
+                ) : (
+                <div className="text-center py-8">No match data available</div>
+                )}
+            </div>
+            )}
         </div>
       </>
     );
