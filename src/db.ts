@@ -4,11 +4,10 @@ import * as dotenv from 'dotenv';
 dotenv.config();  // Load environment variables from .env file
 
 const client = new Client({
-  host: process.env.DATABASE_HOST,
-  port: parseInt(process.env.DATABASE_PORT || '5432', 10),
-  user: process.env.DATABASE_USER,
-  password: process.env.DATABASE_PASSWORD,
-  database: process.env.DATABASE_NAME,
+  connectionString: process.env.DATABASE_URL, // Use the DATABASE_URL from the .env file
+  ssl: {
+    rejectUnauthorized: false,  // Optional: Ensure the connection uses SSL
+  },
 });
 
 client.connect()
