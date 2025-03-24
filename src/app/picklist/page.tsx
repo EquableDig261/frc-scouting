@@ -1,8 +1,8 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { fetchData } from "./../get-data";
-import { setColorData } from "./../actions/setColor";
+import { fetchData } from "../get-data";
+import { setColorData } from "../actions/setColor";
 import { updatePicklist } from "@/app/actions/update-picklist";
 
 // Define the DataType type for the rows returned by the database
@@ -126,7 +126,7 @@ export default function DataAnalysis() {
   return (
     <>
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <h1 className="text-3xl font-bold text-center mb-6">Data Analysis</h1>
+        <h1 className="text-3xl font-bold text-center mb-6">Pick List</h1>
         <p className="text-center mb-4 text-gray-600">Drag and drop rows to reorder them or change row colors</p>
         
         <div className="overflow-x-auto bg-white shadow-md rounded-lg">

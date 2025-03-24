@@ -251,7 +251,7 @@ export function MatchScoutingForm() {
         loading: "Submitting form...",
         success: (result) => {
           if (result.success) {
-            // resetForm();
+            resetForm();
             return "Form submitted successfully";
           } else {
             throw new Error(result.message || "Form submission failed");
@@ -318,7 +318,7 @@ export function MatchScoutingForm() {
   }
 
   function resetForm() {
-    // form.reset(initialFormData);
+    form.reset(initialFormData);
   }
 
   function handleExport() {

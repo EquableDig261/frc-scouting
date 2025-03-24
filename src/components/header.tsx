@@ -28,11 +28,14 @@ export default function Header() {
           <Link href="/match" className="flex items-center space-x-2">
             <span className="font-semibold text-xl">scout</span>
           </Link>
-          <Link href="/data-analysis" className="flex items-center space-x-2">
+          <Link href="/picklist" className="flex items-center space-x-2">
             <span className="font-semibold text-xl">pick list</span>
           </Link>
           <Link href="/compare" className="flex items-center space-x-2">
             <span className="font-semibold text-xl">compare teams</span>
+          </Link>
+          <Link href="/pit" className="flex items-center space-x-2">
+            <span className="font-semibold text-xl">pit scouting</span>
           </Link>
           {/* <Navigation /> */}
         </div>

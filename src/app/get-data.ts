@@ -8,8 +8,6 @@ export async function fetchData() {
     FROM competitions_teams 
     ORDER BY picklist_rank ASC`;
     
-    console.log(query);
     const data = await client.query(query);
-    console.log(data.rows);
     return data.rows;
 }
