@@ -65,11 +65,8 @@ export function PitDataSubmissionForm() {
     setPitData(data, Number(localStorage.getItem("competitionID") ? localStorage.getItem("competitionID") : 1));
     
     // Show toast
-    toast.success("Form data logged to console");
-    
-    // Reset the form
-    form.reset(initialFormData);
-    
+    toast.success("Data Saved");
+    window.location.reload();
     setIsSubmitting(false);
   }
 
@@ -207,9 +204,6 @@ export function PitDataSubmissionForm() {
         </div>
         
         <div className="flex justify-between place-items-center pb-8">
-          <Button type="reset" variant="outline" onClick={() => form.reset(initialFormData)}>
-            Reset Form
-          </Button>
           <Button type="submit" disabled={isSubmitting}>
             {isSubmitting ? "Submitting..." : "Submit"}
           </Button>
