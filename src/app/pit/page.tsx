@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { fetchData } from "./../get-data";
 import { Helper } from "@/components/form/help";
+import { Setter } from "@/components/form/settings";
 import { fetchPitData } from "../actions/get-pit-data";
 import { Tabs, TabsList, TabsTrigger } from "~/tabs";
 import { PitDataSubmissionForm } from "../../components/form/pit-data-submission-form";
@@ -44,7 +45,7 @@ export default function PitData() {
   useEffect(() => {
     const getTeams = async () => {
       try {
-        const fetchedData = await fetchData();
+        const fetchedData = await fetchData(Number(localStorage.getItem("competitionID") ? localStorage.getItem("competitionID") : 1));
         setTeams(fetchedData);
         setLoading(false);
       } catch (error) {
@@ -78,7 +79,8 @@ export default function PitData() {
         parseInt(selectedTeam), 
         0, 
         0, 
-        0
+        0,
+        Number(localStorage.getItem("competitionID") ? localStorage.getItem("competitionID") : 1)
       );
       setComparisonData(compData);
     } catch (error) {
@@ -92,6 +94,7 @@ export default function PitData() {
   return (
     <>
       <Helper />
+      <Setter />
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <h1 className="text-3xl font-bold text-center mb-8">Pit Scouting Data</h1>
         <div className="block">

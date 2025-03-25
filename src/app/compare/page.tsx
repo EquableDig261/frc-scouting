@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { fetchData } from "./../get-data";
 import { Helper } from "@/components/form/help";
+import { Setter } from "@/components/form/settings";
 import { fetchComparisonData } from "../actions/comparison-data";
 import ClusteredBarChart from "@/components/chart";
 import { fetchMatchData } from "../actions/get-match-data";
@@ -68,14 +69,14 @@ export default function TeamComparison() {
         team2 = !team2 ? "0" : team2;
         team3 = !team3 ? "0" : team3;
         team4 = !team4 ? "0" : team4;
-        const results = await fetchMatchData(e.target.value, parseInt(team1), parseInt(team2), parseInt(team3), parseInt(team4));
+        const results = await fetchMatchData(e.target.value, parseInt(team1), parseInt(team2), parseInt(team3), parseInt(team4), Number(localStorage.getItem("competitionID") ? localStorage.getItem("competitionID") : 1));
         setMatchData(results);
     };
   
     useEffect(() => {
       const getTeams = async () => {
         try {
-          const fetchedData = await fetchData();
+          const fetchedData = await fetchData(Number(localStorage.getItem("competitionID") ? localStorage.getItem("competitionID") : 1));
           setTeams(fetchedData);
           setLoading(false);
         } catch (error) {
@@ -113,7 +114,7 @@ export default function TeamComparison() {
       
       setDataLoading(true);
 
-      const results = await fetchMatchData(selectedField, parseInt(team1), parseInt(team2), parseInt(team3), parseInt(team4));
+      const results = await fetchMatchData(selectedField, parseInt(team1), parseInt(team2), parseInt(team3), parseInt(team4), Number(localStorage.getItem("competitionID") ? localStorage.getItem("competitionID") : 1));
       setMatchData(results);
 
       try {
@@ -121,7 +122,8 @@ export default function TeamComparison() {
           parseInt(team1), 
           parseInt(team2), 
           parseInt(team3), 
-          parseInt(team4)
+          parseInt(team4),
+          Number(localStorage.getItem("competitionID") ? localStorage.getItem("competitionID") : 1)
         );
         setComparisonData(compData);
       } catch (error) {
@@ -140,6 +142,7 @@ export default function TeamComparison() {
     return (
       <>
         <Helper />
+        <Setter />
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <h1 className="text-3xl font-bold text-center mb-8">Team Comparison</h1>
           

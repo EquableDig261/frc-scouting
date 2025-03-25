@@ -4,6 +4,8 @@ import React, { useEffect, useState } from "react";
 import { fetchData } from "../get-data";
 import { setColorData } from "../actions/setColor";
 import { updatePicklist } from "@/app/actions/update-picklist";
+import { Helper } from "@/components/form/help";
+import { Setter } from "@/components/form/settings";
 
 // Define the DataType type for the rows returned by the database
 type DataType = {
@@ -27,16 +29,19 @@ export default function DataAnalysis() {
   const [data, setData] = useState<DataType[]>([]);
   const [draggedItem, setDraggedItem] = useState<DataType | null>(null);
   const [draggedOverIndex, setDraggedOverIndex] = useState<number | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
 
   // Function to fetch data that can be called multiple times
   const getData = async () => {
-    const fetchedData = await fetchData();
+    setLoading(true);
+    const fetchedData = await fetchData(Number(localStorage.getItem("competitionID") !== null ? localStorage.getItem("competitionID") : 1));
     // Initialize backgroundColor if not already set
     const dataWithColors = fetchedData.map(item => ({
       ...item,
       backgroundColor: item.background_color || "bg-white"
     }));
     setData(dataWithColors);
+    setLoading(false);
   };
 
   useEffect(() => {
@@ -77,7 +82,7 @@ export default function DataAnalysis() {
     
     try {
       // Update the database with the new order
-      await updatePicklist(draggedIndex, dropIndex);
+      await updatePicklist(draggedIndex, dropIndex, Number(localStorage.getItem("competitionID") !== null ? localStorage.getItem("competitionID") : 1));
       
       // Refresh data after the database update
       await getData();
@@ -115,7 +120,7 @@ export default function DataAnalysis() {
     
     try {
       // Update the database with the new color
-      await setColorData(color, data[index].team_id);
+      await setColorData(color, data[index].team_id, Number(localStorage.getItem("competitionID") !== null ? localStorage.getItem("competitionID") : 1));
     } catch (error) {
       console.error("Error updating color:", error);
       // Optionally revert the UI if the server update fails
@@ -125,10 +130,13 @@ export default function DataAnalysis() {
 
   return (
     <>
+      <Helper />
+      <Setter />
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <h1 className="text-3xl font-bold text-center mb-6">Pick List</h1>
         <p className="text-center mb-4 text-gray-600">Drag and drop rows to reorder them or change row colors</p>
         
+      {loading ? (<div className="text-center text-xl">Loading teams...</div>) : (
         <div className="overflow-x-auto bg-white shadow-md rounded-lg">
           <table className="min-w-full table-fixed">
             <colgroup>
@@ -189,6 +197,7 @@ export default function DataAnalysis() {
             </tbody>
           </table>
         </div>
+      )}
       </div>
     </>
   );

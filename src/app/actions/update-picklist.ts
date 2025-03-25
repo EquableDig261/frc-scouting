@@ -2,7 +2,7 @@
 
 import client from './../../db';
 
-export async function updatePicklist(startIndex: number, finishIndex: number) {
+export async function updatePicklist(startIndex: number, finishIndex: number, competition_id: number) {
     finishIndex = finishIndex + 1;
     startIndex = startIndex + 1;
     const direction = startIndex < finishIndex ? -1 : 1;
@@ -12,7 +12,7 @@ export async function updatePicklist(startIndex: number, finishIndex: number) {
                         WHEN picklist_rank = $4 THEN $5
                         WHEN picklist_rank >= $2 AND picklist_rank <= $3 THEN picklist_rank + $1
                         ELSE picklist_rank
-                    END`;
+                    END WHERE competitions_id = $6`;
     let lowest = startIndex;
     let highest = finishIndex;
     if (startIndex > finishIndex) {
@@ -20,5 +20,5 @@ export async function updatePicklist(startIndex: number, finishIndex: number) {
         highest = startIndex;
     }
 
-    await client.query(query, [direction, lowest, highest, startIndex, finishIndex]);
+    await client.query(query, [direction, lowest, highest, startIndex, finishIndex, competition_id]);
 }

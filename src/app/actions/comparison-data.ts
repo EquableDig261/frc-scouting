@@ -2,7 +2,7 @@
 
 import client from './../../db';
 
-export async function fetchComparisonData(team1: number, team2: number, team3: number, team4: number) {
+export async function fetchComparisonData(team1: number, team2: number, team3: number, team4: number, competition_id: number) {
     const query = `SELECT ct.team_id, 
                     COALESCE(AVG(md.auto_l1 + md.auto_l2 + md.auto_l3 + md.auto_l4), 0) AS auto_avg,
                     COALESCE(AVG(md.auto_l1), 0) AS auto_l1_avg,
@@ -24,7 +24,7 @@ export async function fetchComparisonData(team1: number, team2: number, team3: n
                     COALESCE(AVG(md.climb_rating), 0) AS climb_rating_avg,
                     COALESCE(AVG(md.defence_rating), 0) AS defence_rating_avg,
                     COALESCE(AVG(md.scoring_rating), 0) AS scoring_rating_avg
-    FROM competitions_teams ct LEFT JOIN match_data md ON ct.team_id = md.team_id WHERE ct.team_id = $1 OR ct.team_id = $2 OR ct.team_id = $3 OR ct.team_id = $4 GROUP BY ct.team_id ORDER BY AVG(md.auto_l1) DESC`;
-    const data = await client.query(query, [team1, team2, team3, team4]);
+    FROM competitions_teams ct LEFT JOIN match_data md ON ct.team_id = md.team_id WHERE (ct.team_id = $1 OR ct.team_id = $2 OR ct.team_id = $3 OR ct.team_id = $4) AND ct.competition_id = $5 GROUP BY ct.team_id ORDER BY AVG(md.auto_l1) DESC`;
+    const data = await client.query(query, [team1, team2, team3, team4, Number(competition_id)]);
     return data.rows;
 }

@@ -10,16 +10,15 @@ interface MatchResult {
     categoryD?: number;
 }
 
-export async function fetchMatchData(field: string, team1: number, team2: number, team3: number, team4: number): Promise<MatchResult[]> {
-    const query = `SELECT ${field} AS field FROM match_data WHERE team_id = $1`;
-    console.log(query);
+export async function fetchMatchData(field: string, team1: number, team2: number, team3: number, team4: number, competition_id: number): Promise<MatchResult[]> {
+    const query = `SELECT ${field} AS field FROM match_data WHERE team_id = $1 AND competition_id = $2`;
     const results: MatchResult[] = [];
 
     const [data1, data2, data3, data4] = await Promise.all([
-        client.query(query, [team1]),
-        client.query(query, [team2]),
-        client.query(query, [team3]),
-        client.query(query, [team4]),
+        client.query(query, [team1, competition_id]),
+        client.query(query, [team2, competition_id]),
+        client.query(query, [team3, competition_id]),
+        client.query(query, [team4, competition_id]),
     ]);
 
     const maxMatches = Math.max(data1.rows.length, data2.rows.length, data3.rows.length, data4.rows.length);

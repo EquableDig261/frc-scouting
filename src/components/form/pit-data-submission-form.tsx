@@ -62,7 +62,7 @@ export function PitDataSubmissionForm() {
     setIsSubmitting(true);
     
     // Just console.log the data as requested
-    setPitData(data);
+    setPitData(data, Number(localStorage.getItem("competitionID") ? localStorage.getItem("competitionID") : 1));
     
     // Show toast
     toast.success("Form data logged to console");
